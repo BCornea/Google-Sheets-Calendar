@@ -1,0 +1,112 @@
+let sheet = SpreadsheetApp.getActiveSpreadsheet();
+
+function Calendar() {
+ 
+  var dashboard = sheet.getSheetByName("Dashboard");
+ 
+  var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+ 
+  var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+ 
+  //gets the month selected
+ 
+  let  month = dashboard.getRange(6, 2).getValue();
+ 
+  //Aesthetics
+ 
+  dashboard.getRange(8, 1, 12, 7).clearContent();
+ 
+  dashboard.getRange(6,5).setValue("Loading...");
+ 
+  //next piece of code gives a number to the month January is 0  
+  for(var i = 0;i<months.length;i++){
+    if(months[i]==month){
+      month=i;
+    }
+  }
+ 
+  //gets the year selected  
+  let year = dashboard.getRange(6, 3).getValue();
+ 
+  //gets the first day of the month selected  
+  var firstDay = new Date(year,month,1);
+ 
+  //gets how many days in the month selected
+  var numberDays = new Date(year, month+1, 0).getDate();
+ 
+  //gets the name of the first day
+  var firstDayName = days[firstDay.getDay()];
+ 
+  //get the incidents in an array
+  var incidentsArray = sheet.getSheetByName("Data Sheet").getDataRange().getValues();
+ 
+  var incidents = sheet.getSheetByName("Data Sheet");
+ 
+  //the following next lines are for setting up where to start with the calendar, the row, collumn and day
+  var data = dashboard.getRange(7, 1, 1, 8).getValues();
+ 
+  var range = data[0].indexOf(firstDayName);
+ 
+  var col = range+1;
+ 
+  var row = 8;
+ 
+  var y = 1;
+ 
+  var test = 0;
+ 
+  //next piece of code creates the calendar
+  for(var x = 0; x < numberDays+4;x++){
+    if(col<=7){
+      dashboard.getRange(row , col).setValue(y);      
+     
+      var date = new Date(year,month,y).getDate();
+     
+      var listOfIncidents = [];
+    
+      for(var r=0;r<incidentsArray.length;r++){        
+        try{
+          var compDate = incidentsArray[r][0].getDate();
+          if(date==compDate){          
+            listOfIncidents.push(incidentsArray[r][2]);
+          }
+        }catch(err){}
+       
+      }
+     
+      dashboard.getRange(row+1, col).setValue(listOfIncidents.toString());
+     
+      col++;
+      y++;
+    }else{
+      y--;
+      col = 1;
+      row= row+2;
+      dashboard.getRange(row , col).setValue(y);
+     
+      var date1 = new Date(year,month,y).getDate();
+     
+      var listOfIncidents1 = [];
+     
+      for(var k=0;r<incidentsArray.length;k++){
+       
+        try{
+          var compDate1 = incidentsArray[k][0].getDate();
+          if(date1==compDate1){          
+            listOfIncidents1.push(incidentsArray[k][2]);
+          }
+        }catch(err){}
+       
+       
+      }
+     
+      dashboard.getRange(row+1 , col).setValue(listOfIncidents1.toString());
+     
+      y++;
+    }
+   
+  }
+ 
+  dashboard.getRange(6,5).setValue("All Loaded!");
+ 
+}
